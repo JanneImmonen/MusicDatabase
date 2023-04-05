@@ -19,7 +19,7 @@ MongoDB
 
 Clone the repository: 
 ```bash
-git clone https://github.com/<username>/music-database.git
+git clone https://github.com/JanneImmonen/music-database.git
 ```
 Navigate to the project directory:
 ```bash
