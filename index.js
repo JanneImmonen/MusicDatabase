@@ -99,7 +99,7 @@ app.get("/api/lastfmsearch/:query", async (req, res) => {
       params: {
         method: "album.search",
         album: req.params.query,
-        api_key: "5b5387b8170f4e10e07cbac290dced2d",
+        api_key: LASTFM_API_KEY,
         format: "json",
         limit: 10,
       },
