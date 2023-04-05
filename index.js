@@ -9,10 +9,13 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
+const LASTFM_API_KEY = process.env.LASTFM_API_KEY || "5b5387b8170f4e10e07cbac290dced2d";
+
 // Connect to MongoDB
 async function connectToMongoDB() {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/musicdb", {
+    await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
