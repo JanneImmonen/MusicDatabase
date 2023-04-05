@@ -15,7 +15,8 @@ const LASTFM_API_KEY = process.env.LASTFM_API_KEY || "5b5387b8170f4e10e07cbac290
 // Connect to MongoDB
 async function connectToMongoDB() {
   try {
-    await mongoose.connect(MONGODB_URI, {
+    const connectionString = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
+    await mongoose.connect(connectionString, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
