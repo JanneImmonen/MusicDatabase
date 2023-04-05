@@ -27,7 +27,7 @@ cd MusicDatabase
 ```
 Install dependencies: 
 ```bash
-npm install
+npm install express mongoose body-parser cors path axios
 ```
 Create a .env file and add your MongoDB connection string as MONGODB_URI
 
