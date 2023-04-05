@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Database - Janne Immonen</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1fv/lWWLddq43ZSZzwWijI8PmCJMPKy+Wf1kD/"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Music Database</h1>
+      <div class="mb-3">
+        <label for="search" class="form-label">Search Album</label>
+        <input type="text" class="form-control" id="search" />
+        <button
+          type="button"
+          class="btn btn-secondary mt-2"
+          onclick="searchAlbum()"
+        >
+          Search
+        </button>
+      </div>
+      <div id="search-results-container">
+        <div id="search-results"></div>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1fv/lWWLddq43ZSZzwWijI8PmCJMPKy+Wf1kD/"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+      integrity="sha384-oBqDVmMz4fnFO9gybBud7M5zD8m8D+dTBNLmZ+KJv+SyE7zWl3J5gvz7TJ+hyW7/"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1fv/lWWLddq43ZSZzwWijI8PmCJMPKy+Wf1kD/"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      const API_URL = "http://localhost:3000/api/";
+
+      async function searchAlbum() {
+        const query = document.getElementById("search").value;
+        const response = await axios.get(API_URL + "lastfmsearch/" + query);
+        const results = response.data.results.albummatches.album;
+        displaySearchResults(results);
+      }
+
+      async function fetchAlbums() {
+        const response = await fetch(API_URL + "getall");
+        const albums = await response.json();
+        displayAlbums(albums);
+      }
+
+      function displaySearchResults(results) {
+        const searchResults = document.getElementById("search-results");
+        searchResults.innerHTML = "";
+
+        for (const result of results) {
+          const div = document.createElement("div");
+          div.classList.add("card", "mb-3");
+          div.style.width = "18rem";
+
+          const img = document.createElement("img");
+          img.src = result.image[1]["#text"];
+          img.alt = result.name;
+          img.classList.add("card-img-top");
+
+          const cardBody = document.createElement("div");
+          cardBody.classList.add("card-body");
+
+          const title = document.createElement("h5");
+          title.classList.add("card-title");
+          title.textContent = result.name;
+
+          const artist = document.createElement("p");
+          artist.classList.add("card-text");
+          artist.textContent = result.artist;
+
+          cardBody.appendChild(title);
+          cardBody.appendChild(artist);
+
+          div.appendChild(img);
+          div.appendChild(cardBody);
+
+          searchResults.appendChild(div);
+        }
+      }
+
+      async function addOrUpdateAlbum(event) {
+        event.preventDefault();
+        const id = document.getElementById("album-id").value;
+        const title = document.getElementById("title").value;
+        const artist = document.getElementById("artist").value;
+        const year = document.getElementById("year").value;
+
+        const albumData = { title, artist, year };
+
+        if (id) {
+          await fetch(API_URL + "update/" + id, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(albumData),
+          });
+        } else {
+          await fetch(API_URL + "add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(albumData),
+          });
+        }
+
+        document.getElementById("album-form").reset();
+        document.getElementById("album-id").value = "";
+        fetchAlbums();
+      }
+
+      async function deleteAlbum(id) {
+        await fetch(API_URL + "delete/" + id, { method: "DELETE" });
+        fetchAlbums();
+      }
+
+      async function editAlbum(id) {
+        const response = await fetch(API_URL + id);
+        const album = await response.json();
+
+        document.getElementById("album-id").value = album._id;
+        document.getElementById("title").value = album.title;
+        document.getElementById("artist").value = album.artist;
+        document.getElementById("year").value = album.year;
+      }
+
+      function displayAlbums(albums) {
+        const albumList = document.getElementById("album-search-list");
+        albumList.innerHTML = "";
+
+        for (const album of albums) {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <h3>${album.title}</h3>
+            <p>${album.artist} (${album.year})</p>
+            <button class="btn btn-warning btn-sm" onclick="editAlbum('${album._id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteAlbum('${album._id}')">Delete</button>
+          `;
+
+          albumList.appendChild(div);
+        }
+      }
+
+      document
+        .getElementById("album-form")
+        .addEventListener("submit", addOrUpdateAlbum);
+      displaySearchResults([]);
+      fetchAlbums();
+    </script>
+  </body>
+</html>
