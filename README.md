@@ -19,11 +19,11 @@ MongoDB
 
 Clone the repository: 
 ```bash
-git clone https://github.com/JanneImmonen/music-database.git
+git clone https://github.com/JanneImmonen/MusicDatabase.git
 ```
 Navigate to the project directory:
 ```bash
-cd music-database
+cd MusicDatabase
 ```
 Install dependencies: 
 ```bash
