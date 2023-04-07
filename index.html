@@ -1,9 +1,12 @@
+<!-- This is an HTML document with embedded JavaScript code to create a Music Database application -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- The HTML head section includes metadata, title, and external stylesheets and scripts -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Music Database - Janne Immonen</title>
+    <!-- The document is using Bootstrap CSS and JS for styling and interactivity -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -13,6 +16,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- This is the main container for the Music Database application -->
     <div class="container">
       <h1>Music Database</h1>
       <div class="mb-3">
@@ -26,11 +30,33 @@
           Search
         </button>
       </div>
+      <!-- The container for displaying search results -->
       <div id="search-results-container">
         <div id="search-results"></div>
       </div>
+      <!-- The form for adding or updating albums -->
+      <h2>Add or Update Album</h2>
+      <form id="album-form">
+        <input type="hidden" id="album-id" />
+        <div class="mb-3">
+          <label for="title" class="form-label">Album Title</label>
+          <input type="text" class="form-control" id="title" required />
+        </div>
+        <div class="mb-3">
+          <label for="artist" class="form-label">Artist</label>
+          <input type="text" class="form-control" id="artist" required />
+        </div>
+        <div class="mb-3">
+          <label for="year" class="form-label">Year</label>
+          <input type="number" class="form-control" id="year" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+      <!-- The container for displaying stored albums -->
+      <h2>Stored Albums</h2>
+      <div id="album-search-list"></div>
     </div>
-
+    <!-- External libraries for the application (jQuery, Popper, Bootstrap, and Axios) -->
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1fv/lWWLddq43ZSZzwWijI8PmCJMPKy+Wf1kD/"
@@ -47,23 +73,24 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
+    <!-- Main application JavaScript code -->
     <script>
+      // Define the base API URL for the backend
       const API_URL = "http://localhost:3000/api/";
-
+      // Async function to search for an album using the backend API
       async function searchAlbum() {
         const query = document.getElementById("search").value;
         const response = await axios.get(API_URL + "lastfmsearch/" + query);
         const results = response.data.results.albummatches.album;
         displaySearchResults(results);
       }
-
+      // Async function to fetch all stored albums from the backend API
       async function fetchAlbums() {
         const response = await fetch(API_URL + "getall");
         const albums = await response.json();
         displayAlbums(albums);
       }
-
+      // Function to display the search results in the HTML
       function displaySearchResults(results) {
         const searchResults = document.getElementById("search-results");
         searchResults.innerHTML = "";
@@ -98,7 +125,7 @@
           searchResults.appendChild(div);
         }
       }
-
+      // Async function to add or update an album in the backend API
       async function addOrUpdateAlbum(event) {
         event.preventDefault();
         const id = document.getElementById("album-id").value;
@@ -126,12 +153,12 @@
         document.getElementById("album-id").value = "";
         fetchAlbums();
       }
-
+      // Async function to delete an album using the backend API
       async function deleteAlbum(id) {
         await fetch(API_URL + "delete/" + id, { method: "DELETE" });
         fetchAlbums();
       }
-
+      // Async function to edit an album, filling the form with album data
       async function editAlbum(id) {
         const response = await fetch(API_URL + id);
         const album = await response.json();
@@ -141,7 +168,7 @@
         document.getElementById("artist").value = album.artist;
         document.getElementById("year").value = album.year;
       }
-
+      // Function to display all stored albums in the HTML
       function displayAlbums(albums) {
         const albumList = document.getElementById("album-search-list");
         albumList.innerHTML = "";
@@ -154,14 +181,15 @@
             <button class="btn btn-warning btn-sm" onclick="editAlbum('${album._id}')">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="deleteAlbum('${album._id}')">Delete</button>
           `;
-
           albumList.appendChild(div);
         }
       }
 
       document
         .getElementById("album-form")
+        // Add event listener to the album form to handle submission
         .addEventListener("submit", addOrUpdateAlbum);
+      // Initialize the search results display and fetch all stored albums
       displaySearchResults([]);
       fetchAlbums();
     </script>
