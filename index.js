@@ -13,7 +13,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-<<<<<<< HEAD
 // Define constants for MongoDB URI and LastFM API key
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
@@ -25,15 +24,6 @@ async function connectToMongoDB() {
   try {
     const connectionString =
       process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
-=======
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
-const LASTFM_API_KEY = process.env.LASTFM_API_KEY || "5b5387b8170f4e10e07cbac290dced2d";
-
-// Connect to MongoDB
-async function connectToMongoDB() {
-  try {
-    const connectionString = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/musicdb";
->>>>>>> acfe169984a5da0a67ea2d8cfd1d94197e51219c
     await mongoose.connect(connectionString, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
