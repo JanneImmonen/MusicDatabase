@@ -33,7 +33,7 @@ Create a .env file and add your MongoDB connection string as MONGODB_URI
 
 Start the server: 
 ```bash
-npm start
+node index.js
 ```
 ### Usage
 
